@@ -20,8 +20,25 @@ namespace Serialize_People
             if (args.Length == 0)
             {
                 // If they provide no arguments, display the last person
-                Person p = Deserialize();
-                WriteLine(p.ToString());
+                try
+                {
+                    Person p = Deserialize();
+                    WriteLine(p.ToString());
+                }
+                catch (FileNotFoundException fEx)
+                {
+                    ForegroundColor = ConsoleColor.Red;
+                    WriteLine($"ERROR deserializing with info: {fEx.Message}");
+                }
+                catch (Exception ex)
+                {
+                    WriteLine($"ERROR executing application: {ex.Message}");
+                }
+                finally
+                {
+                    WriteLine("\nClosing the app.");
+                    ReadLine();
+                }
             }
             else
             {
@@ -67,7 +84,7 @@ namespace Serialize_People
         private static Person Deserialize()
         {
             Person dsp = new Person();
-
+            
             using (FileStream fs = new FileStream("Person.xml", FileMode.Open))
             {
                 // Create an XmlSerializer object to perform the deserialization
@@ -75,6 +92,7 @@ namespace Serialize_People
                 // Use the XmlSerializer object to deserialize the data to the file
                 dsp = (Person)xs.Deserialize(fs);
             }
+           
             return dsp;
         }
     }
