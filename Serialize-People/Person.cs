@@ -1,12 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 
 namespace Serialize_People
 {
+    /// <summary>
+    /// Krzysztof Szczurowski 
+    /// BCIT COMP3618 Lab 2
+    /// XML Serialization
+    /// Repo address: https://github.com/kriss3/BCIT_COMP3618_Lab2.git
+    /// </summary>
     [Serializable]
-    class Person : IDeserializationCallback
+    public class Person : IDeserializationCallback
     {
         public string name;
         public DateTime dateOfBirth;

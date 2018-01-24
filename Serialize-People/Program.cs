@@ -1,12 +1,13 @@
 using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
+using static System.Console;
 
 namespace Serialize_People
 {
     /// <summary>
     /// Krzysztof Szczurowski;
-    /// BCIT COMP3608 Lab 1;
+    /// BCIT COMP3608 Lab 2;
     /// Repo: https://github.com/kriss3/BCIT_COMP3618_Lab2.git
     /// Simple program that accepts a name, year, month date,
     /// creates a Person object from that information, 
@@ -20,7 +21,7 @@ namespace Serialize_People
             {
                 // If they provide no arguments, display the last person
                 Person p = Deserialize();
-                Console.WriteLine(p.ToString());
+                WriteLine(p.ToString());
             }
             else
             {
@@ -33,7 +34,7 @@ namespace Serialize_People
 
                     DateTime dob = new DateTime(Int32.Parse(args[1]), Int32.Parse(args[2]), Int32.Parse(args[3]));
                     Person p = new Person(args[0], dob);
-                    Console.WriteLine(p.ToString());
+                    WriteLine(p.ToString());
 
                     Serialize(p);
                 }
@@ -46,43 +47,34 @@ namespace Serialize_People
 
         private static void DisplayUsageInformation(string message)
         {
-            Console.WriteLine("\nERROR: Invalid parameters. " + message);
-            Console.WriteLine("\nSerialize_People \"Name\" Year Month Date");
-            Console.WriteLine("\nFor example:\nSerialize_People \"Tony\" 1922 11 22");
-            Console.WriteLine("\nOr, run the command with no arguments to display that previous person.");
+            WriteLine("\nERROR: Invalid parameters. " + message);
+            WriteLine("\nSerialize_People \"Name\" Year Month Date");
+            WriteLine("\nFor example:\nSerialize_People \"Tony\" 1922 11 22");
+            WriteLine("\nOr, run the command with no arguments to display that previous person.");
         }
 
         private static void Serialize(Person sp)
         {
-            // Create file to save the data to
-            FileStream fs = new FileStream("Person.Dat", FileMode.Create);
-
-            // Create a BinaryFormatter object to perform the serialization
-            BinaryFormatter bf = new BinaryFormatter();
-
-            // Use the BinaryFormatter object to serialize the data to the file
-            bf.Serialize(fs, sp);
-
-            // Close the file
-            fs.Close();
+            using (FileStream fs = new FileStream("Person.xml", FileMode.Create))
+            {
+                // Create an XmlSerializer object to perform the serialization
+                XmlSerializer xs = new XmlSerializer(typeof(Person));
+                // Use the XmlSerializer object to serialize the data to the file
+                xs.Serialize(fs, sp);
+            }
         }
 
         private static Person Deserialize()
         {
             Person dsp = new Person();
 
-            // Open file to read the data from
-            FileStream fs = new FileStream("Person.Dat", FileMode.Open);
-
-            // Create a BinaryFormatter object to perform the deserialization
-            BinaryFormatter bf = new BinaryFormatter();
-
-            // Use the BinaryFormatter object to deserialize the data to from file
-            dsp = (Person)bf.Deserialize(fs);
-
-            // Close the file
-            fs.Close();
-
+            using (FileStream fs = new FileStream("Person.xml", FileMode.Open))
+            {
+                // Create an XmlSerializer object to perform the deserialization
+                XmlSerializer xs = new XmlSerializer(typeof(Person));
+                // Use the XmlSerializer object to deserialize the data to the file
+                dsp = (Person)xs.Deserialize(fs);
+            }
             return dsp;
         }
     }
